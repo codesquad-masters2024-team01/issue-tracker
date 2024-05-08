@@ -1,5 +1,20 @@
 spring:
   application:
     name: issue_tracker
-  config:
-    import: classpath:db-config.yml
+  profiles:
+    active: dev
+---
+
+spring:
+    config:
+      activate:
+            on-profile: dev
+      import: classpath:db-config.yml
+
+---
+
+spring:
+    config:
+      activate:
+            on-profile: test
+      import: classpath:test-db-config.yml

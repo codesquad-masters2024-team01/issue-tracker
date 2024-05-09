@@ -14,5 +14,5 @@ public class IssueListRes {
     private String title;
     private String comment;
     private List<Label> labels;
-    private List<Milestone> milestones;
+    private Milestone milestone;
 }

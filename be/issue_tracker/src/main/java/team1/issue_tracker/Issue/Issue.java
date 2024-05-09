@@ -18,6 +18,8 @@ public class Issue {
     private Long id;
     @Column("user_id")
     private String userId;
+    @Column("milestone_id")
+    private Long milestoneId;
     private String title;
     private String comment;
     @Column("created_at")

@@ -10,16 +10,27 @@ create table USERS
     type        enum ('NORMAL', 'GITHUB', 'APPLE') not null default 'NORMAL'
 );
 
+create table MILESTONE
+(
+    id          bigint auto_increment primary key,
+    name        varchar(255) not null,
+    description text         not null,
+    created_at  timestamp    not null,
+    deadline    timestamp
+);
+
 create table ISSUE
 (
     id               bigint auto_increment primary key,
     user_id          varchar(255)           not null,
+    milestone_id     bigint,
     title            varchar(255)           not null,
     comment          text                   not null,
     created_at       timestamp              not null,
     last_modified_at timestamp              not null default current_timestamp,
     status           enum ('OPEN', 'CLOSE') not null default 'OPEN',
-    foreign key (user_id) references USERS (id)
+    foreign key (user_id) references USERS (id),
+    foreign key (milestone_id) references MILESTONE (id)
 );
 
 create table LABEL
@@ -28,16 +39,7 @@ create table LABEL
     name        varchar(255) not null,
     description text         not null,
     created_at  timestamp    not null,
-    color       varchar(255) not null
-);
-
-create table MILESTONE
-(
-    id          bigint auto_increment primary key,
-    name        varchar(255) not null,
-    description text         not null,
-    created_at  timestamp    not null,
-    deadline    timestamp
+    color       varchar(7)   not null default '#ffffff'
 );
 
 create table COMMENT
@@ -59,13 +61,4 @@ create table ISSUE_LABEL
     label_id bigint,
     foreign key (issue_id) references ISSUE (id),
     foreign key (label_id) references LABEL (id)
-);
-
-create table ISSUE_MILESTONE
-(
-    id           bigint auto_increment primary key,
-    issue_id     bigint,
-    milestone_id bigint,
-    foreign key (issue_id) references ISSUE (id),
-    foreign key (milestone_id) references MILESTONE (id)
 );

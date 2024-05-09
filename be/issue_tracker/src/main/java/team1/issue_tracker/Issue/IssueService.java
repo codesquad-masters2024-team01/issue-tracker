@@ -9,8 +9,6 @@ import team1.issue_tracker.label.Label;
 import team1.issue_tracker.label.LabelRepository;
 
 import java.util.List;
-import team1.issue_tracker.milestone.IssueMilestone;
-import team1.issue_tracker.milestone.IssueMilestoneRepository;
 import team1.issue_tracker.milestone.Milestone;
 import team1.issue_tracker.milestone.MilestoneRepository;
 
@@ -21,24 +19,29 @@ public class IssueService {
     private final LabelRepository labelRepository;
     private final IssueLabelRepository issueLabelRepository;
     private final MilestoneRepository milestoneRepository;
-    private final IssueMilestoneRepository issueMilestoneRepository;
 
     @Autowired
     public IssueService(IssueRepository issueRepository, LabelRepository labelRepository,
                         IssueLabelRepository issueLabelRepository,
-                        MilestoneRepository milestoneRepository, IssueMilestoneRepository issueMilestoneRepository) {
+                        MilestoneRepository milestoneRepository) {
         this.issueRepository = issueRepository;
         this.labelRepository = labelRepository;
         this.issueLabelRepository = issueLabelRepository;
         this.milestoneRepository = milestoneRepository;
-        this.issueMilestoneRepository = issueMilestoneRepository;
     }
 
     public List<IssueListRes> getList() {
         List<Issue> issueList = (List<Issue>) issueRepository.findAll();
 
         return issueList.stream().map(issue -> new IssueListRes(issue.getId(), issue.getTitle(), issue.getComment(),
-                labelsAtIssue(issue.getId()), milestoneAtIssue(issue.getId()))).toList();
+                labelsAtIssue(issue.getId()), getMilestone(issue))).toList();
+    }
+
+    private Milestone getMilestone(Issue issue) {
+        if (issue.getMilestoneId() == null) {
+            return null;
+        }
+        return milestoneRepository.findById(issue.getMilestoneId()).get();
     }
 
     private List<Label> labelsAtIssue(Long issueId) {
@@ -46,15 +49,5 @@ public class IssueService {
 
         return byIssueId.stream().map(issueLabel -> labelRepository.findById(issueLabel.getLabelId()).get()
         ).toList();
-    }
-
-    private Milestone milestoneAtIssue(Long issueId) {
-        Optional<IssueMilestone> milestoneOptional = issueMilestoneRepository.findAllByIssueId(issueId).stream()
-                .findFirst();
-        if (milestoneOptional.isPresent()) {
-            return milestoneRepository.findById(milestoneOptional.get().getMilestoneId()).get();
-        } else {
-            return null;
-        }
     }
 }

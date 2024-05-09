@@ -7,7 +7,7 @@ create table USERS
     name        varchar(255)                       not null,
     created_at  timestamp                          not null,
     profile_img varchar(255),
-    type        enum ('normal', 'github', 'apple') not null default 'normal'
+    type        enum ('NORMAL', 'GITHUB', 'APPLE') not null default 'NORMAL'
 );
 
 create table ISSUE
@@ -18,7 +18,7 @@ create table ISSUE
     comment          text                   not null,
     created_at       timestamp              not null,
     last_modified_at timestamp              not null default current_timestamp,
-    status           enum ('open', 'close') not null default 'open',
+    status           enum ('OPEN', 'CLOSE') not null default 'OPEN',
     foreign key (user_id) references USERS (id)
 );
 

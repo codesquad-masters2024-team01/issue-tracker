@@ -3,9 +3,9 @@ package team1.issue_tracker.Issue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import team1.issue_tracker.label.Label;
-import team1.issue_tracker.temp.Milestone;
 
 import java.util.List;
+import team1.issue_tracker.milestone.Milestone;
 
 @Getter
 @AllArgsConstructor

@@ -24,7 +24,6 @@ create table ISSUE
     id               bigint auto_increment primary key,
     user_id          varchar(255)           not null,
     title            varchar(255)           not null,
-    comment          text                   not null,
     created_at       timestamp              not null default current_timestamp,
     last_modified_at timestamp              not null default current_timestamp,
     status           enum ('open', 'close') not null default 'open',
@@ -40,16 +39,24 @@ create table LABEL
     color       varchar(7)   not null default '#ffffff'
 );
 
-create table REPLY
+create table COMMENT
 (
     id               bigint auto_increment primary key,
     user_id          varchar(255) not null,
     issue_id         bigint       not null,
     created_at       timestamp    not null default current_timestamp,
     last_modified_at timestamp    not null default current_timestamp,
-    hasEmoji         boolean      not null default false,
     foreign key (user_id) references USERS (id),
     foreign key (issue_id) references ISSUE (id)
+);
+
+create table USER_LIKES_COMMENT
+(
+    user_id    varchar(255) not null,
+    comment_id bigint       not null,
+    primary key (user_id, comment_id),
+    foreign key (user_id) references USERS (id),
+    foreign key (comment_id) references COMMENT (id)
 );
 
 create table ISSUE_LABEL
@@ -58,14 +65,24 @@ create table ISSUE_LABEL
     issue_id bigint,
     label_id bigint,
     foreign key (issue_id) references ISSUE (id),
-    foreign key (label_id) references LABEL (id)
+    foreign key (label_id) references LABEL (id),
+    unique (issue_id, label_id)
 );
 
-create table ISSUE_MILESTONE
+create table ASSIGNEE
 (
-    id           bigint auto_increment primary key,
-    issue_id     bigint,
-    milestone_id bigint,
+    id       bigint auto_increment primary key,
+    issue_id bigint,
+    user_id  varchar(255) not null,
     foreign key (issue_id) references ISSUE (id),
-    foreign key (milestone_id) references MILESTONE (id)
+    foreign key (user_id) references LABEL (id),
+    unique (issue_id, user_id)
+);
+
+create table COMMENT_FILE
+(
+    id         bigint auto_increment primary key,
+    comment_id bigint,
+    file_url   varchar(255) not null,
+    foreign key (comment_id) references COMMENT (id)
 );

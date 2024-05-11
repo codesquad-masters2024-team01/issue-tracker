@@ -1,4 +1,4 @@
-package team1.issue_tracker.Issue;
+package team1.issue_tracker.comment;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -7,17 +7,15 @@ import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table("ISSUE")
+@Table("COMMENT")
 @Getter
 @AllArgsConstructor
-public class Issue {
+public class Comment {
     @Id
     @Generated
     private Long id;
+    private Long issueId;
     private String userId;
-    private Long milestoneId;
-    private String title;
-    private IssueStatus status;
     private LocalDateTime lastModifiedAt;
     private LocalDateTime createdAt;
 }

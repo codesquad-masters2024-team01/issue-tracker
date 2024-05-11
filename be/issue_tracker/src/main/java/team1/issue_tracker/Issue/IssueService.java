@@ -1,8 +1,9 @@
 package team1.issue_tracker.Issue;
 
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import team1.issue_tracker.comment.Comment;
+import team1.issue_tracker.comment.CommentRepository;
 import team1.issue_tracker.label.IssueLabel;
 import team1.issue_tracker.label.IssueLabelRepository;
 import team1.issue_tracker.label.Label;
@@ -16,15 +17,18 @@ import team1.issue_tracker.milestone.MilestoneRepository;
 public class IssueService {
 
     private final IssueRepository issueRepository;
+    private final CommentRepository commentRepository;
     private final LabelRepository labelRepository;
     private final IssueLabelRepository issueLabelRepository;
     private final MilestoneRepository milestoneRepository;
 
     @Autowired
-    public IssueService(IssueRepository issueRepository, LabelRepository labelRepository,
+    public IssueService(IssueRepository issueRepository, CommentRepository commentRepository,
+                        LabelRepository labelRepository,
                         IssueLabelRepository issueLabelRepository,
                         MilestoneRepository milestoneRepository) {
         this.issueRepository = issueRepository;
+        this.commentRepository = commentRepository;
         this.labelRepository = labelRepository;
         this.issueLabelRepository = issueLabelRepository;
         this.milestoneRepository = milestoneRepository;
@@ -33,7 +37,8 @@ public class IssueService {
     public List<IssueListRes> getList() {
         List<Issue> issueList = (List<Issue>) issueRepository.findAll();
 
-        return issueList.stream().map(issue -> new IssueListRes(issue.getId(), issue.getTitle(), issue.getComment(),
+        return issueList.stream().map(issue -> new IssueListRes(issue.getId(), issue.getTitle(),
+                commentAtIssue(issue.getId()),
                 labelsAtIssue(issue.getId()), getMilestone(issue))).toList();
     }
 
@@ -45,9 +50,17 @@ public class IssueService {
     }
 
     private List<Label> labelsAtIssue(Long issueId) {
-        List<IssueLabel> byIssueId = issueLabelRepository.findAllByIssueId(issueId);
+        List<IssueLabel> labels = issueLabelRepository.findAllByIssueId(issueId);
 
-        return byIssueId.stream().map(issueLabel -> labelRepository.findById(issueLabel.getLabelId()).get()
+        return labels.stream().map(label -> labelRepository.findById(label.getLabelId()).get()
         ).toList();
     }
+
+    private Comment commentAtIssue(Long issueId) {
+        return commentRepository.findFirstBy(issueId);
+    }
+
+//    private List<Comment> commentsAtIssue(Long issueId) {
+//        return commentRepository.findAllByIssueId(issueId);
+//    }
 }

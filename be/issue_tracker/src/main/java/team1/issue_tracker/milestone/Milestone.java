@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table("MILESTONE")
@@ -18,17 +17,14 @@ public class Milestone {
     @Id
     @Generated
     private Long id;
-    private String name; // 제목
-    private String description; // 설명
-    @Column("created_at")
+    private String name;
+    private String description;
+    private LocalDateTime deadline;
     private LocalDateTime createdAt;
-    private LocalDateTime deadline; // 완료일
 
-    public Milestone(Long id, String name, String description, LocalDateTime createdAt, LocalDateTime deadline) {
-        this.id = id;
+    public Milestone(String name, String description,  LocalDateTime deadline) {
         this.name = name;
         this.description = description;
-        this.createdAt = createdAt;
         this.deadline = deadline;
     }
 }

@@ -12,10 +12,13 @@ class LabelCell: UICollectionViewCell {
     static let identifier: String = "labelCell"
     
     @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var containerCell: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
+        self.containerCell.layer.cornerRadius = 12
+        self.containerCell.clipsToBounds = true
         configureFont()
     }
     
@@ -23,7 +26,7 @@ class LabelCell: UICollectionViewCell {
         super.prepareForReuse()
         
         self.titleLabel.text = nil
-        self.titleLabel.backgroundColor = nil
+        self.titleLabel.backgroundColor = .clear
     }
 
     private func configureFont() {
@@ -33,5 +36,6 @@ class LabelCell: UICollectionViewCell {
     
     func setLabel(_ data: Issue.Label) {
         self.titleLabel.text = data.name
+        self.titleLabel.backgroundColor = UIColor(hex: data.color)
     }
 }

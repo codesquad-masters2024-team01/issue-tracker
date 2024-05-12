@@ -7,9 +7,7 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,5 +56,45 @@ public class LabelRepositoryTest {
         assertThat(foundLabel.getDescription()).isEqualTo("설명");
         assertThat(foundLabel.getColor()).isEqualTo("#000000");
         assertThat(foundLabel.getCreatedAt()).isNotNull();
+    }
+
+    @DisplayName("Id 목록에 해당하는 모든 라벨을 한 번에 조회할 수 있다")
+    @Test
+    void findAllById() {
+        // given
+        Label label1 = Label.builder()
+                .name("이름")
+                .description("설명")
+                .color("#000000")
+                .build();
+
+        Label label2 = Label.builder()
+                .name("이름")
+                .description("설명")
+                .color("#000000")
+                .build();
+
+        Label label3 = Label.builder()
+                .name("이름")
+                .description("설명")
+                .color("#000000")
+                .build();
+
+        Label label4 = Label.builder()
+                .name("이름")
+                .description("설명")
+                .color("#000000")
+                .build();
+
+        // when
+        labelRepository.save(label1);
+        labelRepository.save(label2);
+        labelRepository.save(label3);
+        labelRepository.save(label4);
+        List<Label> foundLabels = (List<Label>) labelRepository.findAllById(List.of(1L, 2L, 3L, 4L));
+
+        //then
+        assertThat(foundLabels.size()).isEqualTo(4);
+        assertThat(foundLabels.get(3).getDescription()).isEqualTo("설명");
     }
 }

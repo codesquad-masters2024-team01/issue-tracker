@@ -50,9 +50,9 @@ public class IssueService {
     }
 
     private List<Label> labelsAtIssue(Long issueId) {
-        List<IssueLabel> labels = issueLabelRepository.findAllByIssueId(issueId);
+        List<IssueLabel> byIssueId = issueLabelRepository.findAllByIssueId(issueId);
+        List<Long> labelIds = byIssueId.stream().map(IssueLabel::getLabelId).toList();
 
-        return labels.stream().map(label -> labelRepository.findById(label.getLabelId()).get()
-        ).toList();
+        return (List<Label>) labelRepository.findAllById(labelIds);
     }
 }

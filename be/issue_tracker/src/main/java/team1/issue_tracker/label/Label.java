@@ -21,11 +21,12 @@ public class Label {
     private String name;
     private String description;
     private String color;
-    private LocalDateTime createdAt;
+    private Timestamp created_at;
 
     public Label(String name, String description, String color) {
         this.name = name;
         this.description = description;
         this.color = color;
+        this.created_at = Timestamp.valueOf(LocalDateTime.now());
     }
 }

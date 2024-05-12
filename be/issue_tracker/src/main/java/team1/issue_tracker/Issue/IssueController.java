@@ -19,7 +19,7 @@ public class IssueController {
     }
 
     @GetMapping("/list")
-    public List<IssueListRes> issueList(){
+    public List<IssueListResponse> issueList(){
         return issueService.getList();
     }
 }

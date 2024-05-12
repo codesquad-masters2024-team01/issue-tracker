@@ -10,10 +10,10 @@ import team1.issue_tracker.milestone.Milestone;
 
 @Getter
 @AllArgsConstructor
-public class IssueListRes {
+public class IssueListResponse {
     private long id;
     private String title;
-    private Comment comment;
+    private String comment;
     private List<Label> labels;
     private Milestone milestone;
 }

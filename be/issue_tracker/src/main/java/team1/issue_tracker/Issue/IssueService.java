@@ -17,35 +17,35 @@ import team1.issue_tracker.milestone.MilestoneRepository;
 public class IssueService {
 
     private final IssueRepository issueRepository;
-    private final CommentRepository commentRepository;
     private final LabelRepository labelRepository;
     private final IssueLabelRepository issueLabelRepository;
     private final MilestoneRepository milestoneRepository;
 
     @Autowired
-    public IssueService(IssueRepository issueRepository, CommentRepository commentRepository,
+    public IssueService(IssueRepository issueRepository,
                         LabelRepository labelRepository,
                         IssueLabelRepository issueLabelRepository,
                         MilestoneRepository milestoneRepository) {
         this.issueRepository = issueRepository;
-        this.commentRepository = commentRepository;
         this.labelRepository = labelRepository;
         this.issueLabelRepository = issueLabelRepository;
         this.milestoneRepository = milestoneRepository;
     }
 
-    public List<IssueListRes> getList() {
+    public List<IssueListResponse> getList() {
         List<Issue> issueList = (List<Issue>) issueRepository.findAll();
 
-        return issueList.stream().map(issue -> new IssueListRes(issue.getId(), issue.getTitle(),
-                commentAtIssue(issue.getId()),
-                labelsAtIssue(issue.getId()), getMilestone(issue))).toList();
+        return issueList.stream().map(issue -> new IssueListResponse(
+                issue.getId(),
+                issue.getTitle(),
+                issue.getComments().get(0).getContent(),
+                labelsAtIssue(issue.getId()),
+                getMilestone(issue))).toList();
     }
 
     private Milestone getMilestone(Issue issue) {
-        if (issue.getMilestoneId() == null) {
-            return null;
-        }
+        if (issue.getMilestoneId() == null) return null;
+
         return milestoneRepository.findById(issue.getMilestoneId()).get();
     }
 
@@ -55,12 +55,4 @@ public class IssueService {
         return labels.stream().map(label -> labelRepository.findById(label.getLabelId()).get()
         ).toList();
     }
-
-    private Comment commentAtIssue(Long issueId) {
-        return commentRepository.findFirstBy(issueId);
-    }
-
-//    private List<Comment> commentsAtIssue(Long issueId) {
-//        return commentRepository.findAllByIssueId(issueId);
-//    }
 }

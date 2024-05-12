@@ -19,19 +19,24 @@ public class LabelRepositoryTest {
     @Autowired
     LabelRepository labelRepository;
 
+    @DisplayName("id와 createdAt을 지정하지 않고 저장하면 자동 생성되어 저장된다")
     @Test
-    void idAutoGenerate() {
+    void autoGenerate() {
+        // given
         Label label = Label.builder()
                 .name("이름")
                 .description("설명")
                 .color("#000000")
-                .createdAt(Timestamp.valueOf(LocalDateTime.now()))
                 .build();
 
+        // when
         assertThat(label.getId()).isNull();
-
+        assertThat(label.getCreatedAt()).isNull();
         Label saved = labelRepository.save(label);
+
+        // then
         assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getCreatedAt()).isNotNull();
     }
 
     @DisplayName("라벨을 저장하고 조회할 수 있다")
@@ -42,18 +47,16 @@ public class LabelRepositoryTest {
                 .name("이름")
                 .description("설명")
                 .color("#000000")
-                .createdAt(Timestamp.valueOf(LocalDateTime.now()))
                 .build();
 
         // when
         labelRepository.save(label);
-        System.out.println(labelRepository.count());
-        Optional<Label> byId = labelRepository.findById(1L);
+        Label foundLabel = labelRepository.findAll().iterator().next();
 
         //then
-//        assertThat(byId.isPresent()).isTrue();
-        assertThat(byId.get().getName()).isEqualTo("이름");
-        assertThat(byId.get().getDescription()).isEqualTo("설명");
-        assertThat(byId.get().getColor()).isEqualTo("#000000");
+        assertThat(foundLabel.getName()).isEqualTo("이름");
+        assertThat(foundLabel.getDescription()).isEqualTo("설명");
+        assertThat(foundLabel.getColor()).isEqualTo("#000000");
+        assertThat(foundLabel.getCreatedAt()).isNotNull();
     }
 }

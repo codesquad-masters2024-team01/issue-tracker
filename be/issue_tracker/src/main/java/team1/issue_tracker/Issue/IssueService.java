@@ -2,10 +2,7 @@ package team1.issue_tracker.Issue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import team1.issue_tracker.comment.Comment;
-import team1.issue_tracker.comment.CommentRepository;
 import team1.issue_tracker.label.IssueLabel;
-import team1.issue_tracker.label.IssueLabelRepository;
 import team1.issue_tracker.label.Label;
 import team1.issue_tracker.label.LabelRepository;
 
@@ -18,17 +15,13 @@ public class IssueService {
 
     private final IssueRepository issueRepository;
     private final LabelRepository labelRepository;
-    private final IssueLabelRepository issueLabelRepository;
     private final MilestoneRepository milestoneRepository;
 
     @Autowired
-    public IssueService(IssueRepository issueRepository,
-                        LabelRepository labelRepository,
-                        IssueLabelRepository issueLabelRepository,
+    public IssueService(IssueRepository issueRepository, LabelRepository labelRepository,
                         MilestoneRepository milestoneRepository) {
         this.issueRepository = issueRepository;
         this.labelRepository = labelRepository;
-        this.issueLabelRepository = issueLabelRepository;
         this.milestoneRepository = milestoneRepository;
     }
 
@@ -39,7 +32,7 @@ public class IssueService {
                 issue.getId(),
                 issue.getTitle(),
                 issue.getComments().get(0).getContent(),
-                labelsAtIssue(issue.getId()),
+                labelsAtIssue(issue),
                 getMilestone(issue))).toList();
     }
 
@@ -49,8 +42,8 @@ public class IssueService {
         return milestoneRepository.findById(issue.getMilestoneId()).get();
     }
 
-    private List<Label> labelsAtIssue(Long issueId) {
-        List<IssueLabel> byIssueId = issueLabelRepository.findAllByIssueId(issueId);
+    private List<Label> labelsAtIssue(Issue issue) {
+        List<IssueLabel> byIssueId = issue.getIssueHasLabel();
         List<Long> labelIds = byIssueId.stream().map(IssueLabel::getLabelId).toList();
 
         return (List<Label>) labelRepository.findAllById(labelIds);

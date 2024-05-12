@@ -7,28 +7,7 @@ create table USERS
     name        varchar(255)                       not null,
     created_at  timestamp                          not null,
     profile_img varchar(255),
-    type        enum ('normal', 'github', 'apple') not null default 'normal'
-);
-
-create table ISSUE
-(
-    id               bigint auto_increment primary key,
-    user_id          varchar(255)           not null,
-    title            varchar(255)           not null,
-    comment          text                   not null,
-    created_at       timestamp              not null,
-    last_modified_at timestamp              not null default current_timestamp,
-    status           enum ('open', 'close') not null default 'open',
-    foreign key (user_id) references USERS (id)
-);
-
-create table LABEL
-(
-    id          bigint auto_increment primary key,
-    name        varchar(255) not null,
-    description text         not null,
-    created_at  timestamp    not null,
-    color       varchar(255) not null
+    type        enum ('NORMAL', 'GITHUB', 'APPLE') not null default 'NORMAL'
 );
 
 create table MILESTONE
@@ -38,6 +17,29 @@ create table MILESTONE
     description text         not null,
     created_at  timestamp    not null,
     deadline    timestamp
+);
+
+create table ISSUE
+(
+    id               bigint auto_increment primary key,
+    user_id          varchar(255)           not null,
+    milestone_id     bigint,
+    title            varchar(255)           not null,
+    comment          text                   not null,
+    created_at       timestamp              not null,
+    last_modified_at timestamp              not null default current_timestamp,
+    status           enum ('OPEN', 'CLOSE') not null default 'OPEN',
+    foreign key (user_id) references USERS (id),
+    foreign key (milestone_id) references MILESTONE (id)
+);
+
+create table LABEL
+(
+    id          bigint auto_increment primary key,
+    name        varchar(255) not null,
+    description text         not null,
+    created_at  timestamp    not null,
+    color       varchar(7)   not null default '#ffffff'
 );
 
 create table COMMENT
@@ -59,13 +61,4 @@ create table ISSUE_LABEL
     label_id bigint,
     foreign key (issue_id) references ISSUE (id),
     foreign key (label_id) references LABEL (id)
-);
-
-create table ISSUE_MILESTONE
-(
-    id           bigint auto_increment primary key,
-    issue_id     bigint,
-    milestone_id bigint,
-    foreign key (issue_id) references ISSUE (id),
-    foreign key (milestone_id) references MILESTONE (id)
 );

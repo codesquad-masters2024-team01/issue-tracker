@@ -1,4 +1,4 @@
-package team1.issue_tracker.Issue;
+package team1.issue_tracker.Issue.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

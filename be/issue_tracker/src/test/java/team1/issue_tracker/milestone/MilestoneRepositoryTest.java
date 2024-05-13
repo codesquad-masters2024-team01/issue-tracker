@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJdbcTest
-@ActiveProfiles("test")
 class MilestoneRepositoryTest {
 
     @Autowired

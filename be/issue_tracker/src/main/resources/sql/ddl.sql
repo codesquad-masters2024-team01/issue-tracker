@@ -63,11 +63,12 @@ create table COMMENT_FILE
 
 create table USER_LIKES_COMMENT
 (
+    id         bigint auto_increment primary key,
     user_id    varchar(255),
     comment_id bigint,
-    primary key (user_id, comment_id),
     foreign key (user_id) references USERS (id),
-    foreign key (comment_id) references COMMENT (id)
+    foreign key (comment_id) references COMMENT (id),
+    unique (user_id, comment_id)
 );
 
 create table ISSUE_HAS_LABEL

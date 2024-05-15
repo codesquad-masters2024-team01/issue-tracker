@@ -31,7 +31,6 @@ public class IssueService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
-
     @Autowired
     public IssueService(IssueRepository issueRepository, LabelRepository labelRepository,
                         MilestoneRepository milestoneRepository, CommentRepository commentRepository, UserRepository userRepository) {

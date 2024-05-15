@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 
 @Table("LABEL")
 @Getter
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 public class Label {
     @Id
     @Generated

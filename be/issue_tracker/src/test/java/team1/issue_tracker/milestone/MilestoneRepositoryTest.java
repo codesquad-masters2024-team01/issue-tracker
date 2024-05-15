@@ -3,12 +3,11 @@ package team1.issue_tracker.milestone;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
-import org.springframework.test.context.ActiveProfiles;
 
 @DataJdbcTest
 class MilestoneRepositoryTest {
@@ -20,16 +19,22 @@ class MilestoneRepositoryTest {
     @Test
     void saveAndFindById() {
         // given
-        Milestone milestone = new Milestone("이름", "설명", LocalDateTime.of(2024, 7, 13, 0, 0));
+        Milestone milestone = Milestone.builder().name("마일스톤").deadline(LocalDateTime.of(2024, 7, 13, 0, 0)).build();
 
         // when
         milestoneRepository.save(milestone);
-        Optional<Milestone> byId = milestoneRepository.findById(1L);
+        Milestone found = milestoneRepository.findById(1L).get();
+
+        Milestone expected = Milestone.builder()
+                .name("이름")
+                .description("설명")
+                .deadline(LocalDateTime.of(2024, 7, 13, 0, 0))
+                .build();
 
         // then
-        assertThat(byId.isPresent()).isTrue();
-        assertThat(byId.get().getName()).isEqualTo("이름");
-        assertThat(byId.get().getDescription()).isEqualTo("설명");
-        assertThat(byId.get().getDeadline()).isEqualTo("2024-07-13T00:00:00");
+        assertThat(found).usingRecursiveComparison().isEqualTo(expected);
+//        assertThat(found.getName()).isEqualTo("이름");
+//        assertThat(found.getDescription()).isEqualTo("설명");
+//        assertThat(found.getDeadline()).isEqualTo("2024-07-13T00:00:00");
     }
 }

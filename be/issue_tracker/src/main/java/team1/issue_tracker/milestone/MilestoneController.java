@@ -7,7 +7,6 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -38,22 +37,29 @@ public class MilestoneController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createMilestone(@RequestBody MilestoneMakeRequest request) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-
-        try {
-            LocalDateTime deadline = LocalDate.parse(request.getDeadline(), formatter).atStartOfDay();
-            milestoneService.createMilestone(request.getName(), request.getDescription(), deadline);
-            return ResponseEntity.ok("Milestone created successfully");
-        } catch (DateTimeParseException e) {
-            return ResponseEntity.badRequest().body("Invalid date format. Please use YYYY.MM.DD.");
-        }
+    public void createMilestone(@RequestBody MilestoneMakeRequest request) throws IllegalArgumentException {
+        log.debug("Create Milestone.");
+        LocalDateTime deadline = getDeadline(request);
+        milestoneService.createMilestone(request.getName(), request.getDescription(), deadline);
     }
 
     @PatchMapping("/{id}")
-    public void updateMilestone(@PathVariable("id") Long id) {
+    public void updateMilestone(@RequestBody MilestoneMakeRequest request, @PathVariable("id") Long id)
+            throws IllegalArgumentException {
         log.debug("Update Milestone.{}", id);
-        milestoneService.updateMilestone(id);
+        LocalDateTime deadline = getDeadline(request);
+        milestoneService.updateMilestone(request.getName(), request.getDescription(), deadline, id);
+    }
+
+    private static LocalDateTime getDeadline(MilestoneMakeRequest request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+        LocalDateTime deadline;
+        try {
+            deadline = LocalDate.parse(request.getDeadline(), formatter).atStartOfDay();
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("날짜가 형식에 맞지 않습니다.");
+        }
+        return deadline;
     }
 
     @DeleteMapping("/{id}")

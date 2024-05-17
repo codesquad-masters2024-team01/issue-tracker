@@ -8,18 +8,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
-import team1.issuetracker.label.IssueLabel;
-import team1.issuetracker.user.IssueAssignee;
+import team1.issuetracker.Issue.dto.IssueMakeRequest;
+import team1.issuetracker.Issue.ref.AssigneeRef;
+import team1.issuetracker.Issue.ref.LabelRef;
 
 @Table("ISSUE")
 @Getter
 @Builder
 @ToString
+@Slf4j
 @AllArgsConstructor
 public class Issue {
     @Id
@@ -30,7 +33,7 @@ public class Issue {
     @MappedCollection(idColumn = "ISSUE_ID")
     private Set<LabelRef> issueHasLabel;
     @MappedCollection(idColumn = "ISSUE_ID")
-    private Set<UserRef> issueAssignees;
+    private Set<AssigneeRef> issueAssignees;
     private IssueStatus status;
 
     @LastModifiedDate
@@ -57,14 +60,14 @@ public class Issue {
         List<Long> labelIds = request.getLabelIds();
         Long milestoneId = request.getMilestoneId();
 
-        Set<UserRef> issueAssignees = assigneeIds.stream()
-                .map(assigneeId -> UserRef.builder().userId(assigneeId).build())
+        Set<AssigneeRef> issueAssignees = assigneeIds.stream()
+                .map(assigneeId -> AssigneeRef.builder().userId(assigneeId).build())
                 .collect(Collectors.toSet());
 
         Set<LabelRef> issueHasLabel = labelIds.stream().map(labelId -> LabelRef.builder().labelId(labelId).build())
                 .collect(Collectors.toSet());
 
-        Issue build = Issue.builder()
+        return Issue.builder()
                 .userId(userId)
                 .title(title)
                 .issueHasLabel(issueHasLabel)
@@ -72,7 +75,5 @@ public class Issue {
                 .milestoneId(milestoneId)
                 .status(IssueStatus.OPEN)
                 .build();
-
-        return build;
     }
 }

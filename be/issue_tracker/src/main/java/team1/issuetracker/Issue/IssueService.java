@@ -1,14 +1,13 @@
 package team1.issuetracker.Issue;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import static team1.issuetracker.Issue.IssueStatus.CLOSE;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.StringJoiner;
-
-import static team1.issuetracker.Issue.IssueStatus.CLOSE;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class IssueService {
@@ -28,12 +27,11 @@ public class IssueService {
         return getIssueById(id);
     }
 
-    public Issue makeIssue(Issue issue) {
+    public Issue createIssue(Issue issue) {
         return issueRepository.save(issue);
     }
 
     public void closeIssue(Long id) throws NoSuchElementException {
-
         Issue issue = getIssueById(id);
         if (issue.getStatus() == CLOSE) throw new IllegalStateException(id + "번 이슈는 이미 닫힌 상태입니다!");
 

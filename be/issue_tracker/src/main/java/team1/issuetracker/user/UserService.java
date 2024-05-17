@@ -1,14 +1,14 @@
 package team1.issuetracker.user;
 
-import org.springframework.stereotype.Service;
-import team1.issuetracker.Issue.Issue;
-import team1.issuetracker.user.dto.RegisterInfo;
-import team1.issuetracker.user.dto.UserInfoResponse;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.stereotype.Service;
+import team1.issuetracker.Issue.Issue;
+import team1.issuetracker.Issue.ref.AssigneeRef;
+import team1.issuetracker.user.dto.RegisterInfo;
+import team1.issuetracker.user.dto.UserInfoResponse;
 
 @Service
 public class UserService {
@@ -33,8 +33,12 @@ public class UserService {
     }
 
     public void createUser(RegisterInfo registerInfo) {
-        if (isDuplicateId(registerInfo.id())) throw new IllegalArgumentException("이미 등록된 ID 입니다");
-        if (isDuplicateId(registerInfo.nickname())) throw new IllegalArgumentException("이미 등록된 닉네임 입니다");
+        if (isDuplicateId(registerInfo.id())) {
+            throw new IllegalArgumentException("이미 등록된 ID 입니다");
+        }
+        if (isDuplicateId(registerInfo.nickname())) {
+            throw new IllegalArgumentException("이미 등록된 닉네임 입니다");
+        }
 
         User newUser = User.normalUSerOf(registerInfo);
         userRepository.insert(newUser);
@@ -48,9 +52,9 @@ public class UserService {
     }
 
     public List<String> getAssigneesAtIssue(Issue issue) {
-        Set<UserRef> issueAssignees = issue.getIssueAssignees();
+        Set<AssigneeRef> issueAssignees = issue.getIssueAssignees();
         return issueAssignees.stream()
-                .map(UserRef::getUserId)
+                .map(AssigneeRef::getUserId)
                 .map(this::getNameById).toList();
     }
 }

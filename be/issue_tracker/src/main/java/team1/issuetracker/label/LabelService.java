@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team1.issuetracker.Issue.Issue;
+import team1.issuetracker.Issue.ref.LabelRef;
 import team1.issuetracker.label.dto.LabelListResponse;
 
 import java.util.List;
@@ -32,12 +33,12 @@ public class LabelService {
         Label savedLabel = getLabel(id);
 
         Label updateLabel = Label.builder()
-            .id(savedLabel.getId())
-            .name(labelMakeRequest.getName())
-            .description(labelMakeRequest.getDescription())
-            .color(labelMakeRequest.getColor())
-            .createdAt(savedLabel.getCreatedAt())
-            .build();
+                .id(savedLabel.getId())
+                .name(labelMakeRequest.getName())
+                .description(labelMakeRequest.getDescription())
+                .color(labelMakeRequest.getColor())
+                .createdAt(savedLabel.getCreatedAt())
+                .build();
 
         return labelRepository.save(updateLabel);
     }
@@ -48,19 +49,21 @@ public class LabelService {
 
     private Label getLabel(Long id) throws NoSuchElementException {
         Optional<Label> optionalLabel = labelRepository.findById(id);
-        if (optionalLabel.isEmpty()) throw new NoSuchElementException(id + "라벨이 존재하지 않습니다!");
+        if (optionalLabel.isEmpty()) {
+            throw new NoSuchElementException(id + "라벨이 존재하지 않습니다!");
+        }
 
         return optionalLabel.get();
     }
 
-    public List<LabelListResponse> getList(){
+    public List<LabelListResponse> getList() {
         List<Label> labelList = (List<Label>) labelRepository.findAll();
         return labelList.stream().map(LabelListResponse::of).toList();
     }
 
     public List<LabelListResponse> getLabelsAyIssue(Issue issue) {
-        Set<IssueLabel> issueLabels = issue.getIssueHasLabel();
-        List<Long> labelIds = issueLabels.stream().map(IssueLabel::getLabelId).toList();
+        Set<LabelRef> issueLabels = issue.getIssueHasLabel();
+        List<Long> labelIds = issueLabels.stream().map(LabelRef::getLabelId).toList();
 
         return labelRepository.findByIdIn(labelIds).stream().map(LabelListResponse::of).toList();
     }

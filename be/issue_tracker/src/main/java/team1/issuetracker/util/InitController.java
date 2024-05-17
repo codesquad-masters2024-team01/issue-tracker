@@ -50,5 +50,4 @@ public class InitController {
             e.printStackTrace();
         }
     }
-
 }

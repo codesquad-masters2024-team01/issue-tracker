@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import team1.issuetracker.Issue.dto.IssueListResponse;
+import team1.issuetracker.Issue.dto.IssueMakeRequest;
 import team1.issuetracker.Issue.dto.IssueShowResponse;
 import team1.issuetracker.comment.CommentService;
+import team1.issuetracker.comment.dto.CommentPostRequest;
 import team1.issuetracker.label.LabelService;
 import team1.issuetracker.milestone.MilestoneService;
 import team1.issuetracker.user.UserService;
@@ -65,7 +67,7 @@ public class IssueController {
     public void createIssue(@RequestBody IssueMakeRequest issueMakeRequest) {
         log.debug("Create issue");
         Issue issue = Issue.from(issueMakeRequest, "test1");
-        Issue saved = issueService.makeIssue(issue);
+        Issue saved = issueService.createIssue(issue);
 
         String comment = issueMakeRequest.getComment();
         commentService.addComment(saved.getId(), "test1", new CommentPostRequest(comment));

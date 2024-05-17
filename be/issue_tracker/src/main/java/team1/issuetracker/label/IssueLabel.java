@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:be/issue_tracker/src/main/java/team1/issuetracker/label/IssueLabel.java
 package team1.issuetracker.label;
+========
+package team1.issue_tracker.Issue;
+>>>>>>>> 2860eee (feat(#41): 이슈 생성하기 기능):be/issue_tracker/src/main/java/team1/issuetracker/Issue/LabelRef.java
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,16 +15,14 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Builder
 @AllArgsConstructor
-public class IssueLabel {
+public class LabelRef {
     @Id
     @Generated
     private Long id;
-    private Long issueId;
     private Long labelId;
 
-    public static IssueLabel of(Long issueId , Long labelId){
-        return IssueLabel.builder()
-                .issueId(issueId)
+    public static LabelRef of(Long issueId , Long labelId){
+        return LabelRef.builder()
                 .labelId(labelId)
                 .build();
     }

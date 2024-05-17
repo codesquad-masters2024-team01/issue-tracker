@@ -28,6 +28,10 @@ public class IssueService {
         return getIssueById(id);
     }
 
+    public Issue makeIssue(Issue issue) {
+        return issueRepository.save(issue);
+    }
+
     public void closeIssue(Long id) throws NoSuchElementException {
 
         Issue issue = getIssueById(id);

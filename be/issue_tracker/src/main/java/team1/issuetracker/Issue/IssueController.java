@@ -24,7 +24,8 @@ public class IssueController {
     private final UserService userService;
 
     @Autowired
-    public IssueController(IssueService issueService, CommentService commentService, LabelService labelService, MilestoneService milestoneService, UserService userService) {
+    public IssueController(IssueService issueService, CommentService commentService, LabelService labelService,
+                           MilestoneService milestoneService, UserService userService) {
         this.issueService = issueService;
         this.commentService = commentService;
         this.labelService = labelService;
@@ -53,11 +54,21 @@ public class IssueController {
         List<Issue> issueList = issueService.getOpenIssues();
 
         return issueList.stream().map(issue -> IssueListResponse.of(
-                issue,
-                commentService.getFirstCommentTextAtIssue(issue),
-                labelService.getLabelsAyIssue(issue),
-                milestoneService.getMilestoneAtIssue(issue)))
+                        issue,
+                        commentService.getFirstCommentTextAtIssue(issue),
+                        labelService.getLabelsAyIssue(issue),
+                        milestoneService.getMilestoneAtIssue(issue)))
                 .toList();
+    }
+
+    @PostMapping
+    public void createIssue(@RequestBody IssueMakeRequest issueMakeRequest) {
+        log.debug("Create issue");
+        Issue issue = Issue.from(issueMakeRequest, "test1");
+        Issue saved = issueService.makeIssue(issue);
+
+        String comment = issueMakeRequest.getComment();
+        commentService.addComment(saved.getId(), "test1", new CommentPostRequest(comment));
     }
 
     @PostMapping("/{id}/close")

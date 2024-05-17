@@ -48,9 +48,9 @@ public class UserService {
     }
 
     public List<String> getAssigneesAtIssue(Issue issue) {
-        Set<IssueAssignee> issueAssignees = issue.getIssueAssignees();
+        Set<UserRef> issueAssignees = issue.getIssueAssignees();
         return issueAssignees.stream()
-                .map(IssueAssignee::getAssigneeId)
+                .map(UserRef::getUserId)
                 .map(this::getNameById).toList();
     }
 }

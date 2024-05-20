@@ -69,7 +69,7 @@ public class CommentService {
     }
 
     public String getFirstCommentTextAtIssue(Issue issue) {
-        return commentRepository.findFirstByIssueId(issue.getId()).getContent();
+        return commentRepository.findFirstAtIssue(issue.getId()).getContent();
     }
 
 

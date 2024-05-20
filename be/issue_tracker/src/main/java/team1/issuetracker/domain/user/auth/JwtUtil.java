@@ -47,7 +47,6 @@ public class JwtUtil {
             return claims.getSubject();
         } catch (Exception e) {
             System.out.println("실패..");
-            e.printStackTrace(); // Add this line to get more details on why it failed
             return null;
         }
     }

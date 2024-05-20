@@ -39,28 +39,28 @@ public class MilestoneController {
     @PostMapping
     public void createMilestone(@RequestBody MilestoneMakeRequest request) throws IllegalArgumentException {
         log.debug("Create Milestone.");
-        LocalDateTime deadline = getDeadline(request);
-        milestoneService.createMilestone(request.getName(), request.getDescription(), deadline);
+//        LocalDateTime deadline = getDeadline(request);
+        milestoneService.createMilestone(request.getName(), request.getDescription(), request.getDeadline());
     }
 
     @PatchMapping("/{id}")
     public void updateMilestone(@RequestBody MilestoneMakeRequest request, @PathVariable("id") Long id)
             throws IllegalArgumentException {
         log.debug("Update Milestone.{}", id);
-        LocalDateTime deadline = getDeadline(request);
-        milestoneService.updateMilestone(request.getName(), request.getDescription(), deadline, id);
+//        LocalDateTime deadline = getDeadline(request);
+        milestoneService.updateMilestone(request.getName(), request.getDescription(), request.getDeadline(), id);
     }
 
-    private static LocalDateTime getDeadline(MilestoneMakeRequest request) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-        LocalDateTime deadline;
-        try {
-            deadline = LocalDate.parse(request.getDeadline(), formatter).atStartOfDay();
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("날짜가 형식에 맞지 않습니다.");
-        }
-        return deadline;
-    }
+//    private static LocalDateTime getDeadline(MilestoneMakeRequest request) {
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+//        LocalDateTime deadline;
+//        try {
+//            deadline = LocalDate.parse(request.getDeadline(), formatter).atStartOfDay();
+//        } catch (DateTimeParseException e) {
+//            throw new IllegalArgumentException("날짜가 형식에 맞지 않습니다.");
+//        }
+//        return deadline;
+//    }
 
     @DeleteMapping("/{id}")
     public void deleteMilestone(@PathVariable("id") Long id) {

@@ -47,7 +47,7 @@ public class MilestoneService {
         }
         Milestone milestone = optionalMilestone.get();
         milestoneRepository.delete(milestone);
-    }
+    } 
 
     public void updateMilestone(String name, String description, LocalDateTime deadline, Long id) {
         Optional<Milestone> optionalMilestone = milestoneRepository.findById(id);

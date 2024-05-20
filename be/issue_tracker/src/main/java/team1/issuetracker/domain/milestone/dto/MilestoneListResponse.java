@@ -1,10 +1,10 @@
 package team1.issuetracker.domain.milestone.dto;
 
+import java.util.Date;
 import team1.issuetracker.domain.milestone.Milestone;
 
-import java.time.LocalDateTime;
 
-public record MilestoneListResponse(long id, String name, String description, LocalDateTime deadline, int openCounts,
+public record MilestoneListResponse(long id, String name, String description, Date deadline, int openCounts,
                                     int closedCounts, int completion) {
     public static MilestoneListResponse of(Milestone milestone) {
         return new MilestoneListResponse(milestone.getId(), milestone.getName(),

@@ -15,7 +15,7 @@ create table MILESTONE
     id          bigint auto_increment primary key,
     name        varchar(255) unique not null,
     description text,
-    deadline    timestamp,
+    deadline    date,
     created_at  timestamp default current_timestamp
 );
 

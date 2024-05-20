@@ -1,9 +1,5 @@
 package team1.issuetracker.domain.milestone;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,28 +35,28 @@ public class MilestoneController {
     @PostMapping
     public void createMilestone(@RequestBody MilestoneMakeRequest request) throws IllegalArgumentException {
         log.debug("Create Milestone.");
-        LocalDateTime deadline = getDeadline(request);
-        milestoneService.createMilestone(request.name(), request.description(), deadline);
+//        LocalDateTime deadline = getDeadline(request);
+        milestoneService.createMilestone(request.name(), request.description(), request.deadline());
     }
 
     @PatchMapping("/{id}")
     public void updateMilestone(@RequestBody MilestoneMakeRequest request, @PathVariable("id") Long id)
             throws IllegalArgumentException {
         log.debug("Update Milestone.{}", id);
-        LocalDateTime deadline = getDeadline(request);
-        milestoneService.updateMilestone(request.name(), request.description(), deadline, id);
+//        LocalDateTime deadline = getDeadline(request);
+        milestoneService.updateMilestone(request.name(), request.description(), request.deadline(), id);
     }
 
-    private static LocalDateTime getDeadline(MilestoneMakeRequest request) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-        LocalDateTime deadline;
-        try {
-            deadline = LocalDate.parse(request.deadline(), formatter).atStartOfDay();
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("날짜가 형식에 맞지 않습니다.");
-        }
-        return deadline;
-    }
+//    private static LocalDateTime getDeadline(MilestoneMakeRequest request) {
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+//        LocalDateTime deadline;
+//        try {
+//            deadline = LocalDate.parse(request.getDeadline(), formatter).atStartOfDay();
+//        } catch (DateTimeParseException e) {
+//            throw new IllegalArgumentException("날짜가 형식에 맞지 않습니다.");
+//        }
+//        return deadline;
+//    }
 
     @DeleteMapping("/{id}")
     public void deleteMilestone(@PathVariable("id") Long id) {

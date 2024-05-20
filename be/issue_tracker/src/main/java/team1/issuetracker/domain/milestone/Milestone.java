@@ -1,6 +1,7 @@
 package team1.issuetracker.domain.milestone;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +26,7 @@ public class Milestone {
     private String description;
     @MappedCollection(idColumn = "MILESTONE_ID")
     private Set<Issue> issues;
-    private LocalDateTime deadline;
+    private Date deadline;
     @CreatedDate
     private LocalDateTime createdAt;
 

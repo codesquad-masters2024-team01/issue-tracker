@@ -31,7 +31,6 @@ public class IssueTest {
         // given
         IssueMakeRequest issueMakeRequest = new IssueMakeRequest("이슈등록테스트용제목", "내용", List.of(), List.of(), null);
 
-
         // when
         ExtractableResponse<Response> response = request.post(issueMakeRequest, "/issue");
 

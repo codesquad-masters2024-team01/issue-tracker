@@ -2,6 +2,7 @@ package team1.issuetracker.unit.milestone;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +22,7 @@ class MilestoneRepositoryTest {
     @Test
     void saveAndFindById() {
         // given
-        Milestone milestone = Milestone.builder().name("마일스톤").deadline(LocalDateTime.of(2024, 7, 13, 0, 0)).build();
+        Milestone milestone = Milestone.builder().name("마일스톤").deadline(Date.valueOf("2000.07.13")).build();
 
         // when
         milestoneRepository.save(milestone);
@@ -30,7 +31,7 @@ class MilestoneRepositoryTest {
         Milestone expected = Milestone.builder()
                 .name("이름")
                 .description("설명")
-                .deadline(LocalDateTime.of(2024, 7, 13, 0, 0))
+                .deadline(Date.valueOf("2000.07.13"))
                 .build();
 
         // then

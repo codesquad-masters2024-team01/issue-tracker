@@ -1,6 +1,6 @@
 package team1.issuetracker.domain.milestone;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -35,7 +35,7 @@ public class MilestoneService {
         return new MilestoneShowResponse(milestoneId, milestone.getName());
     }
 
-    public void createMilestone(String name, String description, LocalDateTime deadline) {
+    public void createMilestone(String name, String description, Date deadline) {
         Milestone milestone = Milestone.builder().name(name).description(description).deadline(deadline).build();
         milestoneRepository.save(milestone);
     }
@@ -47,9 +47,9 @@ public class MilestoneService {
         }
         Milestone milestone = optionalMilestone.get();
         milestoneRepository.delete(milestone);
-    }
+    } 
 
-    public void updateMilestone(String name, String description, LocalDateTime deadline, Long id) {
+    public void updateMilestone(String name, String description, Date deadline, Long id) {
         Optional<Milestone> optionalMilestone = milestoneRepository.findById(id);
         if (optionalMilestone.isEmpty()) {
             throw new NoSuchElementException(id + "번 마일스톤이 존재하지 않습니다!");

@@ -33,14 +33,15 @@ public class LabelService implements Authorizable<Label, Long> {
     }
 
     public Label updateLabel(long id, LabelMakeRequest labelMakeRequest, String userId) {
-        Label savedLabel = getLabel(id);
+        Label origin = authorize(id, userId); //origin 받기
 
         Label updateLabel = Label.builder()
-                .id(savedLabel.getId())
+                .id(origin.getId())
                 .name(labelMakeRequest.name())
                 .description(labelMakeRequest.description())
                 .color(labelMakeRequest.color())
-                .createdAt(savedLabel.getCreatedAt())
+                .createdAt(origin.getCreatedAt())
+                .userId(userId)
                 .build();
 
         return labelRepository.save(updateLabel);

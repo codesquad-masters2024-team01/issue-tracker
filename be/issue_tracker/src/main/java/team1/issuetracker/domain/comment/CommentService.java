@@ -77,7 +77,7 @@ public class CommentService implements Authorizable<Comment, Long> {
         return firstAtIssue.getContent();
     }
 
-    public Comment modifyComment(long id, String userId, CommentPostRequest commentInfo) throws NoSuchElementException, AuthorizeException {
+    public Comment updateComment(long id, String userId, CommentPostRequest commentInfo) throws NoSuchElementException, AuthorizeException {
         Comment origin = authorize(id, userId);
         Comment newComment = Comment.makeOnlyComment(origin.getIssueId(), userId, commentInfo.content());
         commentRepository.save(newComment);

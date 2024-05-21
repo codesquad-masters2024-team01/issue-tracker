@@ -29,7 +29,7 @@ public class CommentController {
     public Comment updateComment(@PathVariable long id, @RequestBody CommentPostRequest commentInfo,
                                  HttpServletRequest request) throws NoSuchElementException, AuthorizeException {
         String userId = authenticator.authenticate(request);
-        return commentService.modifyComment(id, userId, commentInfo);
+        return commentService.updateComment(id, userId, commentInfo);
     }
 
     @DeleteMapping("/comment/{id}")

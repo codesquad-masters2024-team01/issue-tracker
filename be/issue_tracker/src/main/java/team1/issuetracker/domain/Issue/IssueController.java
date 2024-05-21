@@ -1,5 +1,6 @@
 package team1.issuetracker.domain.Issue;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import team1.issuetracker.domain.user.UserService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import team1.issuetracker.domain.user.auth.Authenticator;
 
 @RequestMapping("/issue")
 @Slf4j
@@ -24,15 +26,16 @@ public class IssueController {
     private final LabelService labelService;
     private final MilestoneService milestoneService;
     private final UserService userService;
-
+    private final Authenticator authenticator;
     @Autowired
     public IssueController(IssueService issueService, CommentService commentService, LabelService labelService,
-                           MilestoneService milestoneService, UserService userService) {
+                           MilestoneService milestoneService, UserService userService, Authenticator authenticator) {
         this.issueService = issueService;
         this.commentService = commentService;
         this.labelService = labelService;
         this.milestoneService = milestoneService;
         this.userService = userService;
+        this.authenticator = authenticator;
     }
 
     @GetMapping("/{id}")
@@ -64,32 +67,37 @@ public class IssueController {
     }
 
     @PostMapping
-    public IssueShowResponse createIssue(@RequestBody IssueMakeRequest issueMakeRequest) {
+    public IssueShowResponse createIssue(@RequestBody IssueMakeRequest issueMakeRequest, HttpServletRequest httpServletRequest) {
         log.debug("Create issue with \n{}" , issueMakeRequest);
-        Issue issue = Issue.from(issueMakeRequest, "test1");
+
+        String userId= authenticator.authenticate(httpServletRequest);
+        Issue issue = Issue.from(issueMakeRequest, userId);
         Issue saved = issueService.createIssue(issue);
 
         String comment = issueMakeRequest.getComment();
-        commentService.addComment(saved.getId(), "test1", new CommentPostRequest(saved.getId(),comment));
+        commentService.addComment(saved.getId(), userId, new CommentPostRequest(saved.getId(),comment));
 
         return showIssue(saved.getId());
     }
 
     @PostMapping("/{id}/close")
-    public long closeIssue(@PathVariable("id") Long id) throws NoSuchElementException, IllegalStateException {
+    public long closeIssue(@PathVariable("id") Long id, HttpServletRequest httpServletRequest) throws NoSuchElementException, IllegalStateException {
         log.debug("Close issue.{}", id);
-        return issueService.closeIssue(id);
+        String userId = authenticator.authenticate(httpServletRequest);
+        return issueService.closeIssue(id,userId);
     }
 
     @PostMapping("/multi/close")
-    public void closeMultiIssue(@RequestBody List<Long> issueIds) throws RuntimeException {
+    public void closeMultiIssue(@RequestBody List<Long> issueIds, HttpServletRequest httpServletRequest) throws RuntimeException {
         log.debug("Close all issues.{}", issueIds);
-        issueService.closeIssues(issueIds);
+        String userId = authenticator.authenticate(httpServletRequest);
+        issueService.closeIssues(issueIds, userId);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteIssue(@PathVariable("id") Long id) {
+    public void deleteIssue(@PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
         log.debug("Delete issue.{}", id);
-        issueService.deleteIssue(id);
+        String userId = authenticator.authenticate(httpServletRequest);
+        issueService.deleteIssue(id, userId);
     }
 }

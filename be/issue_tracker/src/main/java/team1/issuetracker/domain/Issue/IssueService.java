@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.StringJoiner;
+import team1.issuetracker.domain.user.auth.Authorizable;
+import team1.issuetracker.domain.user.auth.AuthorizeException;
 
 import static team1.issuetracker.domain.Issue.IssueStatus.CLOSE;
 
 @Service
-public class IssueService {
+public class IssueService implements Authorizable<Issue, Long> {
 
     private final IssueRepository issueRepository;
 
@@ -41,8 +43,8 @@ public class IssueService {
         return saved;
     }
 
-    public long closeIssue(Long id) throws NoSuchElementException {
-        Issue issue = getIssueById(id);
+    public long closeIssue(Long id, String userId) throws NoSuchElementException {
+        Issue issue = authorize(id,userId);
         if (issue.getStatus() == CLOSE) throw new IllegalStateException(id + "번 이슈는 이미 닫힌 상태입니다!");
 
         issue.setStatus(CLOSE);
@@ -50,8 +52,8 @@ public class IssueService {
         return id;
     }
 
-    public void deleteIssue(Long id) throws NoSuchElementException {
-        issueRepository.delete(getIssueById(id));
+    public void deleteIssue(Long id, String userId) throws NoSuchElementException {
+        issueRepository.delete(authorize(id, userId));
     }
 
     public Issue getIssueById(Long id) throws NoSuchElementException {
@@ -63,11 +65,11 @@ public class IssueService {
         return optionalIssue.get();
     }
 
-    public void closeIssues(List<Long> issueIds) {
+    public void closeIssues(List<Long> issueIds, String userId) {
         StringJoiner exceptionMessages = new StringJoiner("\n");
         issueIds.forEach(id -> {
             try {
-                closeIssue(id);
+                closeIssue(id, userId);
             } catch (RuntimeException exception) {
                 exceptionMessages.add(exception.getMessage());
             }
@@ -76,5 +78,13 @@ public class IssueService {
         if (exceptionMessages.length() != 0) {
             throw new RuntimeException(exceptionMessages.toString());
         }
+    }
+
+    @Override
+    public Issue authorize(Long issueId, String userId) {
+        Issue issue = getIssueById(issueId);
+        if(!issue.getUserId().equals(userId)) throw new AuthorizeException(issueId + "번 이슈에 대한 권한이 없습니다");
+
+        return issue;
     }
 }

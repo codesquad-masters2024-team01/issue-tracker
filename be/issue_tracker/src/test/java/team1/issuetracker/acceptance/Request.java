@@ -35,6 +35,17 @@ public class Request {
                 .extract();
     }
 
+    protected ExtractableResponse<Response> patch(Object params, String url){
+        return RestAssured.given().log().all()
+            .body(params)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+            .patch(url)
+            .then()
+            .log().all()
+            .extract();
+    }
+
     protected ExtractableResponse<Response> delete(String url) {
         return RestAssured.given().log().all()
                 .when()

@@ -61,6 +61,15 @@ public class LabelTest {
             , "#000000");
         request.post(labelMakeRequest, "/label");
 
+        //when
+        LabelMakeRequest updateLabelRequest = new LabelMakeRequest("updateLabel", "testDescription"
+            , "#000000");
+        ExtractableResponse<Response> response = request.patch(updateLabelRequest, "/label/1");
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.contentType()).isEqualTo(ContentType.JSON.toString());
+        assertThat(response.body().jsonPath().getString("name")).isEqualTo("updateLabel");
     }
 
     @DisplayName("레이블 목록을 조회할 수 있따")

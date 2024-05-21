@@ -34,12 +34,14 @@ public class LabelController {
     }
 
     @PatchMapping("/{id}")
-    public Label updateLabel(@PathVariable long id, @RequestBody LabelMakeRequest labelMakeRequest){
-        return labelService.updateLabel(id, labelMakeRequest);
+    public Label updateLabel(@PathVariable long id, @RequestBody LabelMakeRequest labelMakeRequest, HttpServletRequest httpServletRequest){
+        String userId = authenticator.authenticate(httpServletRequest);
+        return labelService.updateLabel(id, labelMakeRequest, userId);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteLabel(@PathVariable long id) {
-        labelService.deleteLabel(id);
+    public void deleteLabel(@PathVariable long id,  HttpServletRequest httpServletRequest) {
+        String userId = authenticator.authenticate(httpServletRequest);
+        labelService.deleteLabel(id, userId);
     }
 }

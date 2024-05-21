@@ -6,16 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team1.issuetracker.domain.Issue.Issue;
 import team1.issuetracker.domain.Issue.ref.LabelRef;
+import team1.issuetracker.domain.comment.Comment;
 import team1.issuetracker.domain.label.dto.LabelListResponse;
 
 import java.util.List;
 import java.util.Set;
 
 import team1.issuetracker.domain.label.dto.LabelMakeRequest;
+import team1.issuetracker.domain.user.auth.Authorizable;
+import team1.issuetracker.domain.user.auth.AuthorizeException;
 
 
 @Service
-public class LabelService {
+public class LabelService implements Authorizable<Label, Long> {
 
     private final LabelRepository labelRepository;
 
@@ -29,7 +32,7 @@ public class LabelService {
         return labelRepository.save(label);
     }
 
-    public Label updateLabel(long id, LabelMakeRequest labelMakeRequest) {
+    public Label updateLabel(long id, LabelMakeRequest labelMakeRequest, String userId) {
         Label savedLabel = getLabel(id);
 
         Label updateLabel = Label.builder()
@@ -43,8 +46,8 @@ public class LabelService {
         return labelRepository.save(updateLabel);
     }
 
-    public void deleteLabel(Long id) throws NoSuchElementException {
-        labelRepository.delete(getLabel(id));
+    public void deleteLabel(Long id, String userId) throws NoSuchElementException {
+        labelRepository.delete(authorize(id,userId));
     }
 
     private Label getLabel(Long id) throws NoSuchElementException {
@@ -66,5 +69,13 @@ public class LabelService {
         List<Long> labelIds = issueLabels.stream().map(LabelRef::getLabelId).toList();
 
         return labelRepository.findByIdIn(labelIds).stream().map(LabelListResponse::of).toList();
+    }
+
+    @Override
+    public Label authorize(Long labelId, String userId) {
+        Label label = getLabel(labelId);
+        if(!label.getUserId().equals(userId)) throw new AuthorizeException(labelId + "번 라벨에 대한 권한이 없습니다");
+
+        return label;
     }
 }

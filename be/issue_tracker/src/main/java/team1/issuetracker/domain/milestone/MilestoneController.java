@@ -1,20 +1,14 @@
 package team1.issuetracker.domain.milestone;
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import team1.issuetracker.domain.milestone.dto.MilestoneListResponse;
 import team1.issuetracker.domain.milestone.dto.MilestoneMakeRequest;
-import team1.issuetracker.domain.user.auth.Authenticator;
+import team1.issuetracker.domain.user.auth.annotation.Authenticate;
+import team1.issuetracker.domain.user.auth.annotation.AuthenticatedUserId;
+
+import java.util.List;
 
 @RequestMapping("/milestone")
 @Slf4j
@@ -22,12 +16,10 @@ import team1.issuetracker.domain.user.auth.Authenticator;
 public class MilestoneController {
 
     private final MilestoneService milestoneService;
-    private final Authenticator authenticator;
 
     @Autowired
-    public MilestoneController(MilestoneService milestoneService, Authenticator authenticator) {
+    public MilestoneController(MilestoneService milestoneService) {
         this.milestoneService = milestoneService;
-        this.authenticator = authenticator;
     }
 
     @GetMapping("/list")
@@ -35,24 +27,25 @@ public class MilestoneController {
         return milestoneService.getList();
     }
 
+    @Authenticate
     @PostMapping
-    public Milestone createMilestone(@RequestBody MilestoneMakeRequest milestoneMakeRequest)
+    public Milestone createMilestone(@RequestBody MilestoneMakeRequest milestoneMakeRequest, @AuthenticatedUserId String userId)
             throws IllegalArgumentException {
         return milestoneService.createMilestone(milestoneMakeRequest.name(), milestoneMakeRequest.description(),
-                milestoneMakeRequest.deadline());
+                milestoneMakeRequest.deadline(), userId);
     }
 
+    @Authenticate
     @PatchMapping("/{id}")
     public Milestone updateMilestone(@RequestBody MilestoneMakeRequest milestoneMakeRequest,
-                                     @PathVariable("id") Long id, HttpServletRequest httpServletRequest)
+                                     @PathVariable("id") Long id, @AuthenticatedUserId String userId)
             throws IllegalArgumentException {
-        String userId = authenticator.authenticate(httpServletRequest);
         return milestoneService.updateMilestone(milestoneMakeRequest, id, userId);
     }
 
+    @Authenticate
     @DeleteMapping("/{id}")
-    public void deleteMilestone(@PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
-        String userId = authenticator.authenticate(httpServletRequest);
+    public void deleteMilestone(@PathVariable("id") Long id, @AuthenticatedUserId String userId) {
         milestoneService.deleteMilestone(id, userId);
     }
 }

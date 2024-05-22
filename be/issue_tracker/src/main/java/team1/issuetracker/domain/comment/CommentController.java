@@ -1,9 +1,9 @@
 package team1.issuetracker.domain.comment;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 import team1.issuetracker.domain.comment.dto.CommentPostRequest;
-import team1.issuetracker.domain.user.auth.Authenticator;
+import team1.issuetracker.domain.user.auth.annotation.Authenticate;
+import team1.issuetracker.domain.user.auth.annotation.AuthenticatedUserId;
 import team1.issuetracker.domain.user.auth.AuthorizeException;
 
 import java.util.NoSuchElementException;
@@ -12,41 +12,39 @@ import java.util.NoSuchElementException;
 @RestController
 public class CommentController {
     private final CommentService commentService;
-    private final Authenticator authenticator;
 
-    public CommentController(CommentService commentService, Authenticator authenticator) {
+    public CommentController(CommentService commentService) {
         this.commentService = commentService;
-        this.authenticator = authenticator;
     }
 
+    @Authenticate
     @PostMapping("/comment")
-    public void createComment(@RequestBody CommentPostRequest commentInfo, HttpServletRequest request) {
-        String userId = authenticator.authenticate(request);
-        commentService.addComment(commentInfo.issueId(), userId, commentInfo); // 로그인 기능 구현 전 임시로 'test1' 유저 사용
+    public void createComment(@RequestBody CommentPostRequest commentInfo, @AuthenticatedUserId String userId) {
+        commentService.addComment(commentInfo.issueId(), userId, commentInfo);
     }
 
+    @Authenticate
     @PatchMapping("/comment/{id}")
     public Comment updateComment(@PathVariable long id, @RequestBody CommentPostRequest commentInfo,
-                                 HttpServletRequest request) throws NoSuchElementException, AuthorizeException {
-        String userId = authenticator.authenticate(request);
+                                 @AuthenticatedUserId String userId) throws NoSuchElementException, AuthorizeException {
         return commentService.updateComment(id, userId, commentInfo);
     }
 
+    @Authenticate
     @DeleteMapping("/comment/{id}")
-    public void deleteComment(@PathVariable long id, HttpServletRequest request) throws NoSuchElementException, AuthorizeException {
-        String userId = authenticator.authenticate(request);
+    public void deleteComment(@PathVariable long id, @AuthenticatedUserId String userId) throws NoSuchElementException, AuthorizeException {
         commentService.deleteComment(id, userId);
     }
 
+    @Authenticate
     @PostMapping("/comment/{id}/like")
-    public int likeComment(@PathVariable long id, HttpServletRequest request) {
-        String userId = authenticator.authenticate(request);
-        return commentService.likeComment(userId, id); // 로그인 기능 구현 전 임시로 'test1' 유저 사용
+    public int likeComment(@PathVariable long id, @AuthenticatedUserId String userId) {
+        return commentService.likeComment(userId, id);
     }
 
+    @Authenticate
     @PostMapping("/comment/{id}/unlike")
-    public int unLikeComment(@PathVariable long id, HttpServletRequest request) {
-        String userId = authenticator.authenticate(request);
+    public int unLikeComment(@PathVariable long id, @AuthenticatedUserId String userId) {
         return commentService.unlikeComment(userId, id);
     }
 }

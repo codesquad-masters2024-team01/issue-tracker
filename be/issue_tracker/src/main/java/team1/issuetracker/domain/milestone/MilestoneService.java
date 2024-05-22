@@ -38,8 +38,8 @@ public class MilestoneService implements Authorizable<Milestone, Long> {
         return new MilestoneShowResponse(milestoneId, milestone.getName());
     }
 
-    public Milestone createMilestone(String name, String description, Date deadline) {
-        Milestone milestone = Milestone.builder().name(name).description(description).deadline(deadline).build();
+    public Milestone createMilestone(String name, String description, Date deadline, String userId) {
+        Milestone milestone = Milestone.builder().name(name).description(description).deadline(deadline).userId(userId).build();
         return milestoneRepository.save(milestone);
     }
 

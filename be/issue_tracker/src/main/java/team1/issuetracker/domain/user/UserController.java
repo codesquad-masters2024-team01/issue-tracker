@@ -44,9 +44,4 @@ public class UserController {
     public UserInfoResponse userInfo(@PathVariable String id) throws NoSuchElementException {
         return userService.getUserInfo(id);
     }
-
-    @GetMapping("/test")
-    public String tokenValidateTest(@RequestBody String key) {
-        return jwtUtil.validateToken(key);
-    }
 }
